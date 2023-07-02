@@ -1,6 +1,6 @@
 import Server from './app/app';
 
-const server = new Server(3000);
+const server = new Server();
 server.start();
 
 const sum = (a: number, b: number) => {

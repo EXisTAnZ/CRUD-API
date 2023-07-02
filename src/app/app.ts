@@ -1,10 +1,12 @@
 import http from 'http';
+import dotenv from 'dotenv';
 
 export default class Server {
   private port: number;
 
-  constructor(port: number) {
-    this.port = port;
+  constructor() {
+    dotenv.config();
+    this.port = parseInt(process.env['PORT'] || '3000');
   }
 
   start() {
