@@ -5,6 +5,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const config = {
+  target: "node18.16",
   mode: "production",
   entry: "./src/index.ts",
   module: {
@@ -17,10 +18,7 @@ const config = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts"],
-    extensionAlias: {
-      ".js": [".ts", ".js"],
-    },
+    extensions: [".ts"],
   },
   output: {
     path: path.resolve(__dirname, "dist"),
