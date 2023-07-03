@@ -1,5 +1,6 @@
 import http from 'http';
 import Router from '../router/router';
+import { ERROR_MSG, HTTP_STATUS } from '../types/constants';
 
 export default class Server {
   private server: http.Server;
@@ -8,7 +9,14 @@ export default class Server {
   constructor() {
     this.router = new Router();
     this.server = http.createServer((req, res) => {
-      this.router.exec(req, res);
+      try {
+        this.router.exec(req, res);
+      } catch (err) {
+        res.statusCode = HTTP_STATUS.SERVER_ERROR;
+        res.write(ERROR_MSG.SERVER_ERROR);
+        res.end();
+        console.log((err as Error).message);
+      }
     });
   }
 
@@ -16,6 +24,6 @@ export default class Server {
     this.server.listen(port, () => {
       console.log(`Server running at ${port}`);
     });
-    this.server.on('error', err => console.log(err.message));
+    this.server.on('error', (err) => console.log(err.message));
   }
 }

@@ -46,52 +46,82 @@ export default class Controller {
     const body = await parseReq(req);
     const userId = v4();
     const user = { id: userId, ...body };
-    this.dbEngine
-      .addUser(user)
-      .then(() => {
-        this.sendResponse(HTTP_STATUS.CREATED, JSON.stringify(user), res);
-      })
-      .catch((err) => {
-        console.log(err.message);
-        if (err.message == ERROR_MSG.LOGIN_USED)
-          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
-        else if (err.message == ERROR_MSG.MISS_REQUIRED)
-          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
-        else
-          this.sendResponse(
-            HTTP_STATUS.SERVER_ERROR,
-            ERROR_MSG.SERVER_ERROR,
-            res,
-          );
-      });
+    if (!body.username) {
+      this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.INVALID_BODY, res);
+    } else {
+      this.dbEngine
+        .addUser(user)
+        .then(() => {
+          this.sendResponse(HTTP_STATUS.CREATED, JSON.stringify(user), res);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          if (err.message == ERROR_MSG.LOGIN_USED)
+            this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+          else if (err.message == ERROR_MSG.MISS_REQUIRED)
+            this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+          else
+            this.sendResponse(
+              HTTP_STATUS.SERVER_ERROR,
+              ERROR_MSG.SERVER_ERROR,
+              res,
+            );
+        });
+    }
   }
 
   public async put(req: IncomingMessage, res: ServerResponse, id?: string) {
     const body = await parseReq(req);
     const user = { id, ...body };
-    this.dbEngine
-      .updateUser(user)
-      .then(() => this.sendResponse(HTTP_STATUS.SUCCESS, '', res))
-      .catch((err) => {
-        console.log(err.message);
-        if (err.message == ERROR_MSG.LOGIN_USED)
-          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
-        else if (err.message == ERROR_MSG.USER_NOT_FOUND)
-          this.sendResponse(HTTP_STATUS.NOT_FOUND, err.message, res);
-        else if (err.message == ERROR_MSG.MISS_REQUIRED)
-          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
-        else
-          this.sendResponse(
-            HTTP_STATUS.SERVER_ERROR,
-            ERROR_MSG.SERVER_ERROR,
-            res,
-          );
-      });
+    if (!id || !validate(id)) {
+      this.sendResponse(
+        HTTP_STATUS.BAD_REQUEST,
+        ERROR_MSG.INVALID_USER_ID,
+        res,
+      );
+    } else if (!body.username) {
+      this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.INVALID_BODY, res);
+    } else {
+      this.dbEngine
+        .updateUser(user)
+        .then(() =>
+          this.sendResponse(HTTP_STATUS.OK, JSON.stringify(user), res),
+        )
+        .catch((err) => {
+          console.log(err.message);
+          if (err.message == ERROR_MSG.LOGIN_USED)
+            this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+          else if (err.message == ERROR_MSG.USER_NOT_FOUND)
+            this.sendResponse(HTTP_STATUS.NOT_FOUND, err.message, res);
+          else if (err.message == ERROR_MSG.MISS_REQUIRED)
+            this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+          else
+            this.sendResponse(
+              HTTP_STATUS.SERVER_ERROR,
+              ERROR_MSG.SERVER_ERROR,
+              res,
+            );
+        });
+    }
   }
 
-  public async delete(req: IncomingMessage, res: ServerResponse) {
-    console.log(req, res);
-    throw new Error('need implement');
+  public async delete(_: IncomingMessage, res: ServerResponse, id?: string) {
+    if (!id || !validate(id)) {
+      this.sendResponse(
+        HTTP_STATUS.BAD_REQUEST,
+        ERROR_MSG.INVALID_USER_ID,
+        res,
+      );
+    } else {
+      this.dbEngine
+        .removeUser(id || '')
+        .then(() => {
+          this.sendResponse(HTTP_STATUS.SUCCESS, '', res);
+        })
+        .catch((err) => {
+          this.sendResponse(HTTP_STATUS.NOT_FOUND, err.message, res);
+        });
+    }
   }
 
   public wrongRoute(_: IncomingMessage, res: ServerResponse) {

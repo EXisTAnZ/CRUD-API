@@ -21,7 +21,6 @@ export default class DBEngine {
   }
 
   public async addUser(user: User) {
-    console.log(user, this.isValidUser(user));
     if (!this.isValidUser(user)) {
       throw new Error(ERROR_MSG.MISS_REQUIRED);
     }
@@ -31,7 +30,6 @@ export default class DBEngine {
   }
 
   public async updateUser(user: User) {
-    console.log(user, this.isValidUser(user));
     const userDB = this.existedUser(user.id);
     if (!userDB) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
@@ -50,10 +48,12 @@ export default class DBEngine {
   }
 
   public async removeUser(id: string) {
+    const userDB = this.existedUser(id);
+    console.log(userDB, id);
     if (!this.existedUser(id)) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
     }
-    this.db.filter((user) => user.id !== id);
+    this.db = this.db.filter((user) => user.id !== id);
   }
 
   private isLoginUsed(login: string) {

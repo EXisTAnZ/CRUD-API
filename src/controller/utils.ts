@@ -16,8 +16,13 @@ export function parseReq(req: IncomingMessage): Promise<User> {
     });
 
     req.on('end', () => {
-      body = JSON.parse(Buffer.concat(chunks).toString());
-      resolve(body);
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString());
+        resolve(body);
+      } catch (err) {
+        console.log((err as Error).message);
+        resolve(body);
+      }
     });
 
     req.on('error', (err) => {
