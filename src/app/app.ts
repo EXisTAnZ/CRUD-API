@@ -1,10 +1,15 @@
 import http from 'http';
+import Router from '../router/router';
 
 export default class Server {
   private server: http.Server;
+  private router: Router;
 
   constructor() {
-    this.server = http.createServer();
+    this.router = new Router();
+    this.server = http.createServer((req, res) => {
+      this.router.exec(req, res);
+    });
   }
 
   start(port: string) {
