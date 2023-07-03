@@ -21,17 +21,27 @@ export default class DBEngine {
   }
 
   public async addUser(user: User) {
+    console.log(user, this.isValidUser(user));
+    if (!this.isValidUser(user)) {
+      throw new Error(ERROR_MSG.MISS_REQUIRED);
+    }
     if (this.isLoginUsed(user.username)) {
       throw new Error(ERROR_MSG.LOGIN_USED);
     } else this.db.push(user);
   }
 
   public async updateUser(user: User) {
+    console.log(user, this.isValidUser(user));
     const userDB = this.existedUser(user.id);
     if (!userDB) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
-    } else if (this.isLoginUsed(user.username)) {
+    } else if (
+      userDB.username !== user.username &&
+      this.isLoginUsed(user.username)
+    ) {
       throw new Error(ERROR_MSG.LOGIN_USED);
+    } else if (!this.isValidUser(user)) {
+      throw new Error(ERROR_MSG.MISS_REQUIRED);
     } else {
       userDB.username = user.username;
       userDB.age = user.age;
@@ -52,5 +62,16 @@ export default class DBEngine {
 
   private existedUser(id?: string) {
     return this.db.find((user) => user.id == id);
+  }
+
+  private isValidUser(user: User) {
+    return !(
+      !user.username ||
+      typeof user.username !== 'string' ||
+      !user.age ||
+      typeof user.age !== 'number' ||
+      !user.hobbies ||
+      !Array.isArray(user.hobbies)
+    );
   }
 }

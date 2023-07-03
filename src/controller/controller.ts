@@ -53,13 +53,40 @@ export default class Controller {
       })
       .catch((err) => {
         console.log(err.message);
-        this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.LOGIN_USED, res);
+        if (err.message == ERROR_MSG.LOGIN_USED)
+          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+        else if (err.message == ERROR_MSG.MISS_REQUIRED)
+          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+        else
+          this.sendResponse(
+            HTTP_STATUS.SERVER_ERROR,
+            ERROR_MSG.SERVER_ERROR,
+            res,
+          );
       });
   }
 
-  public async put(req: IncomingMessage, res: ServerResponse) {
-    console.log(req, res);
-    throw new Error('need implement');
+  public async put(req: IncomingMessage, res: ServerResponse, id?: string) {
+    const body = await parseReq(req);
+    const user = { id, ...body };
+    this.dbEngine
+      .updateUser(user)
+      .then(() => this.sendResponse(HTTP_STATUS.SUCCESS, '', res))
+      .catch((err) => {
+        console.log(err.message);
+        if (err.message == ERROR_MSG.LOGIN_USED)
+          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+        else if (err.message == ERROR_MSG.USER_NOT_FOUND)
+          this.sendResponse(HTTP_STATUS.NOT_FOUND, err.message, res);
+        else if (err.message == ERROR_MSG.MISS_REQUIRED)
+          this.sendResponse(HTTP_STATUS.BAD_REQUEST, err.message, res);
+        else
+          this.sendResponse(
+            HTTP_STATUS.SERVER_ERROR,
+            ERROR_MSG.SERVER_ERROR,
+            res,
+          );
+      });
   }
 
   public async delete(req: IncomingMessage, res: ServerResponse) {

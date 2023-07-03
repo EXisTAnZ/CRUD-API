@@ -25,7 +25,7 @@ export default class Router {
               await this.controller.post(req, res);
               break;
             case HTTP_METHODS.PUT:
-              await this.controller.put(req, res);
+              await this.controller.put(req, res, param);
               break;
             case HTTP_METHODS.DELETE:
               await this.controller.delete(req, res);
