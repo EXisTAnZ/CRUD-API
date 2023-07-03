@@ -9,4 +9,5 @@ export enum ERROR_MSG {
   LOGIN_USED = 'User with this login already registered',
   INVALID_USER_ID = 'Invalid userID',
   USER_NOT_FOUND = 'User not found',
+  INVALID_ROUTE = 'This api doesnt exist',
 }
