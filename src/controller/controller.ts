@@ -16,20 +16,16 @@ export default class Controller {
       this.dbEngine
         .getUsers()
         .then(data => {
-          res.statusCode = HTTP_STATUS.OK;
-          res.write(JSON.stringify(data));
-          res.end();
+          this.sendResponse(HTTP_STATUS.OK, JSON.stringify(data), res);
         })
         .catch(err => console.log(err));
     } else if (!validate(id)) {
-      res.statusCode = HTTP_STATUS.BAD_REQUEST;
-      res.write(ERROR_MSG.INVALID_USER_ID);
+      this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.INVALID_USER_ID, res);
     } else {
       this.dbEngine
         .getUserById(id)
         .then(data => {
-          res.statusCode = HTTP_STATUS.OK;
-          res.write(JSON.stringify(data));
+          this.sendResponse(HTTP_STATUS.OK, JSON.stringify(data), res);
         })
         .catch(err => console.log(err));
     }
@@ -42,8 +38,7 @@ export default class Controller {
     this.dbEngine
       .addUser(user)
       .then(() => {
-        res.statusCode = HTTP_STATUS.CREATED;
-        res.write(JSON.stringify(user));
+        this.sendResponse(HTTP_STATUS.CREATED, JSON.stringify(user), res);
       })
       .catch(err => {
         console.log(err);
@@ -65,5 +60,11 @@ export default class Controller {
   public wrongRoute(_: IncomingMessage, res: ServerResponse) {
     res.statusCode = HTTP_STATUS.BAD_REQUEST;
     res.end(ERROR_MSG.INVALID_ROUTE);
+  }
+
+  private sendResponse(code: number, message: string, res: ServerResponse) {
+    res.statusCode = code;
+    res.write(message);
+    res.end();
   }
 }
