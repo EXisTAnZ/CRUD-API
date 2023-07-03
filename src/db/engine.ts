@@ -9,24 +9,24 @@ export default class DBEngine {
     this.db = userDB;
   }
 
-  public getUsers(): User[] {
+  public async getUsers(): Promise<User[]> {
     return this.db;
   }
 
-  public getUserById(id: string): User {
+  public async getUserById(id: string): Promise<User> {
     const user = this.existedUser(id);
     if (!user) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
     } else return user;
   }
 
-  public addUser(user: User) {
+  public async addUser(user: User) {
     if (this.isLoginUsed(user.username)) {
       throw new Error(ERROR_MSG.LOGIN_USED);
     } else this.db.push(user);
   }
 
-  public updateUser(user: User) {
+  public async updateUser(user: User) {
     const userDB = this.existedUser(user.id);
     if (!userDB) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
@@ -39,7 +39,7 @@ export default class DBEngine {
     }
   }
 
-  public removeUser(id: string) {
+  public async removeUser(id: string) {
     if (!this.existedUser(id)) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
     }
