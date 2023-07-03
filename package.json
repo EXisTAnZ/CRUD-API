@@ -5,8 +5,10 @@
   "main": ".src/index.ts",
   "type": "module",
   "scripts": {
+    "start": "node dist/bundle.js",
+    "build": "webpack",
     "start:dev": "nodemon",
-    "start:prod": "webpack",
+    "start:prod": "npm run build && npm run start",
     "test": "jest",
     "lint": "npx eslint ./src"
   },
