@@ -1,24 +1,16 @@
 import http from 'http';
-import dotenv from 'dotenv';
 
 export default class Server {
-  private port: number;
+  private server: http.Server;
 
   constructor() {
-    dotenv.config();
-    this.port = parseInt(process.env['PORT'] || '3000');
+    this.server = http.createServer();
   }
 
-  start() {
-    const server = http.createServer((async (req, res) => {
-      console.log(req);
-      res.end();
-    }) as http.RequestListener);
-
-    server.listen(this.port, 'localhost', () => {
-      console.log(`Server running at http://localhost:${this.port}/`);
+  start(port: string) {
+    this.server.listen(port, () => {
+      console.log(`Server running at ${port}`);
     });
-
-    server.on('error', (err) => console.log(err.message));
+    this.server.on('error', err => console.log(err.message));
   }
 }

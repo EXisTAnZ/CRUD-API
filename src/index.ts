@@ -1,10 +1,7 @@
 import Server from './app/app';
+import dotenv from 'dotenv';
 
+dotenv.config();
+const { PORT } = process.env;
 const server = new Server();
-server.start();
-
-const sum = (a: number, b: number) => {
-  return a + b;
-};
-
-export default sum;
+server.start(PORT || '3000');
