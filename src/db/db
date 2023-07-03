@@ -1,3 +1,0 @@
-import User from '../types/user';
-const db: User[] = [];
-export default db;
