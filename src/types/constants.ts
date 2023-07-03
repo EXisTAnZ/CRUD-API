@@ -10,6 +10,7 @@ export enum ERROR_MSG {
   INVALID_USER_ID = 'Invalid userID',
   USER_NOT_FOUND = 'User not found',
   INVALID_ROUTE = 'This api doesnt exist',
+  INVALID_URL = 'Invalid url',
 }
 
 export enum HTTP_STATUS {

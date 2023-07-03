@@ -43,14 +43,14 @@ export default class DBEngine {
     if (!this.existedUser(id)) {
       throw new Error(ERROR_MSG.USER_NOT_FOUND);
     }
-    this.db.filter(user => user.id !== id);
+    this.db.filter((user) => user.id !== id);
   }
 
   private isLoginUsed(login: string) {
-    return !!this.db.find(user => user.username === login);
+    return !!this.db.find((user) => user.username === login);
   }
 
   private existedUser(id?: string) {
-    return this.db.find(user => user.id === id);
+    return this.db.find((user) => user.id == id);
   }
 }

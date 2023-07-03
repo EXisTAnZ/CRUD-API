@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import DBEngine from '../db/engine';
 import { v4, validate } from 'uuid';
-import parseReq from './utils';
+import { parseReq } from './utils';
 import { ERROR_MSG, HTTP_STATUS } from '../types/constants';
 
 export default class Controller {
@@ -15,35 +15,45 @@ export default class Controller {
     if (!id) {
       this.dbEngine
         .getUsers()
-        .then(data => {
+        .then((data) => {
           this.sendResponse(HTTP_STATUS.OK, JSON.stringify(data), res);
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     } else if (!validate(id)) {
-      this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.INVALID_USER_ID, res);
+      this.sendResponse(
+        HTTP_STATUS.BAD_REQUEST,
+        ERROR_MSG.INVALID_USER_ID,
+        res,
+      );
     } else {
       this.dbEngine
         .getUserById(id)
-        .then(data => {
+        .then((data) => {
           this.sendResponse(HTTP_STATUS.OK, JSON.stringify(data), res);
         })
-        .catch(err => console.log(err));
+        .catch((err) => {
+          console.log(err.message);
+          this.sendResponse(
+            HTTP_STATUS.NOT_FOUND,
+            ERROR_MSG.USER_NOT_FOUND,
+            res,
+          );
+        });
     }
   }
 
   public async post(req: IncomingMessage, res: ServerResponse) {
     const body = await parseReq(req);
     const userId = v4();
-    const user = { userId, ...body };
+    const user = { id: userId, ...body };
     this.dbEngine
       .addUser(user)
       .then(() => {
         this.sendResponse(HTTP_STATUS.CREATED, JSON.stringify(user), res);
       })
-      .catch(err => {
-        console.log(err);
-        res.statusCode = HTTP_STATUS.BAD_REQUEST;
-        res.write(err.message);
+      .catch((err) => {
+        console.log(err.message);
+        this.sendResponse(HTTP_STATUS.BAD_REQUEST, ERROR_MSG.LOGIN_USED, res);
       });
   }
 
@@ -58,8 +68,10 @@ export default class Controller {
   }
 
   public wrongRoute(_: IncomingMessage, res: ServerResponse) {
-    res.statusCode = HTTP_STATUS.BAD_REQUEST;
-    res.end(ERROR_MSG.INVALID_ROUTE);
+    this.sendResponse(HTTP_STATUS.NOT_FOUND, ERROR_MSG.INVALID_ROUTE, res);
+  }
+  public wrongUrl(_: IncomingMessage, res: ServerResponse) {
+    this.sendResponse(HTTP_STATUS.NOT_FOUND, ERROR_MSG.INVALID_URL, res);
   }
 
   private sendResponse(code: number, message: string, res: ServerResponse) {

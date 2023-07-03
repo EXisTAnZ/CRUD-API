@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http';
 import User from '../types/user';
 
-export default function parseReq(req: IncomingMessage): Promise<User> {
+export function parseReq(req: IncomingMessage): Promise<User> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
     let body: User = {
@@ -20,9 +20,16 @@ export default function parseReq(req: IncomingMessage): Promise<User> {
       resolve(body);
     });
 
-    req.on('error', err => {
+    req.on('error', (err) => {
       console.log(err.message);
       reject(err.message);
     });
   });
+}
+
+export function parseUrl(url: string) {
+  const urlParts = url.slice(1).split('/');
+  const [api, route, param] = urlParts;
+  // const param = urlParts.length === 4 ? urlParts.pop() : '';
+  return { api, route, param };
 }
