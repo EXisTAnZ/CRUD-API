@@ -11,3 +11,12 @@ export enum ERROR_MSG {
   USER_NOT_FOUND = 'User not found',
   INVALID_ROUTE = 'This api doesnt exist',
 }
+
+export enum HTTP_STATUS {
+  OK = 200,
+  CREATED = 201,
+  SUCCESS = 204,
+  BAD_REQUEST = 400,
+  NOT_FOUND = 404,
+  SERVER_ERROR = 500,
+}

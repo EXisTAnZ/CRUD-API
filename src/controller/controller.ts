@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import DBEngine from '../db/engine';
 import { v4, validate } from 'uuid';
 import parseReq from './utils';
-import { ERROR_MSG } from '../types/constants';
+import { ERROR_MSG, HTTP_STATUS } from '../types/constants';
 
 export default class Controller {
   private dbEngine: DBEngine;
@@ -16,19 +16,19 @@ export default class Controller {
       this.dbEngine
         .getUsers()
         .then(data => {
-          res.statusCode = 200;
+          res.statusCode = HTTP_STATUS.OK;
           res.write(JSON.stringify(data));
           res.end();
         })
         .catch(err => console.log(err));
     } else if (!validate(id)) {
-      res.statusCode = 400;
+      res.statusCode = HTTP_STATUS.BAD_REQUEST;
       res.write(ERROR_MSG.INVALID_USER_ID);
     } else {
       this.dbEngine
         .getUserById(id)
         .then(data => {
-          res.statusCode = 200;
+          res.statusCode = HTTP_STATUS.OK;
           res.write(JSON.stringify(data));
         })
         .catch(err => console.log(err));
@@ -42,12 +42,12 @@ export default class Controller {
     this.dbEngine
       .addUser(user)
       .then(() => {
-        res.statusCode = 201;
+        res.statusCode = HTTP_STATUS.CREATED;
         res.write(JSON.stringify(user));
       })
       .catch(err => {
         console.log(err);
-        res.statusCode = 400;
+        res.statusCode = HTTP_STATUS.BAD_REQUEST;
         res.write(err.message);
       });
   }
@@ -63,7 +63,7 @@ export default class Controller {
   }
 
   public wrongRoute(_: IncomingMessage, res: ServerResponse) {
-    res.statusCode = 400;
+    res.statusCode = HTTP_STATUS.BAD_REQUEST;
     res.end(ERROR_MSG.INVALID_ROUTE);
   }
 }

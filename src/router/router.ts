@@ -15,7 +15,6 @@ export default class Router {
         case '/api/users':
           switch (req.method) {
             case HTTP_METHODS.GET:
-              console.log('asdasdasd');
               await this.controller.get(req, res);
               break;
             case HTTP_METHODS.POST:
