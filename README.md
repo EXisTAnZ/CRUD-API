@@ -22,15 +22,19 @@ By default server started at 3000 port, but you can specify it in .env file
 
  <details>
   <summary> endpoint api/users </summary>
-TODO: need to write something
+- GET api/users - return all users records
+- GET api/users/userId - return user by Id
+- POST api/users - create new user
+- PUT api/users/userId - update user
+- DELETE api/users/userId - delete user
 
 </details>
  <details>
   <summary> in-memory database </summary>
-  TODO: need to write something
+  all data saved in RAM and reset on restart server
 </details>
 
  <details>
   <summary> tests </summary>
-TODO: need to write something
+  Unfortunately, it's too late for writing tests.
 </details>
